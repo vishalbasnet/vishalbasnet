@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced POS System - Nepal</title>
+    <link rel="stylesheet" href="main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <div class="logo">RetailPro POS</div>
+            <div id="error-message" style="color: red; font-weight: bold;"></div>
+            <div class="user-info">
+                <span id="current-username">User</span>
+                <div class="user-avatar" id="user-avatar" aria-label="User Avatar">U</div>
+            </div>
+        </header>
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <ul class="nav-menu">
+                <li class="nav-item active" data-tab="pos">
+                    <i class="fas fa-cash-register"></i>
+                    <span>Billing</span>
+                </li>
+                <li class="nav-item" data-tab="inventory">
+                    <i class="fas fa-boxes"></i>
+                    <span>Inventory</span>
+                </li>
+                <li class="nav-item" data-tab="sales-history">
+                    <i class="fas fa-history"></i>
+                    <span>Sales History</span>
+                </li>
+                <li class="nav-item" data-tab="analytics">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Analytics</span>
+                </li>
+                <li class="nav-item" data-tab="customers">
+                    <i class="fas fa-users"></i>
+                    <span>Customers</span>
+                </li>
+                <li class="nav-item" data-tab="settings">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- POS Tab -->
+            <div class="tab-content active" id="pos">
+                <div class="pos-container">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Products</div>
+                            <div class="search-container">
+                                <i class="fas fa-search search-icon"></i>
+                                <input type="text" class="search-input" placeholder="Search products..." id="product-search">
+                            </div>
+                        </div>
+                        <div class="category-tabs" id="category-tabs">
+                            <!-- Category tabs will be added dynamically -->
+                        </div>
+                        <div class="products-grid" id="products-grid">
+                            <!-- Product cards will be added dynamically -->
+                        </div>
+                    </div>
+
+                    <div class="order-summary">
+                        <div class="card-header">
+                            <div class="card-title">Order Summary</div>
+                            <button class="btn btn-danger" id="clear-order">
+                                <i class="fas fa-trash"></i> Clear
+                            </button>
+                        </div>
+                        <div class="order-items" id="order-items">
+                            <div class="empty-order">No items added yet</div>
+                        </div>
+                        <div class="order-totals">
+                            <div class="total-row">
+                                <span>Subtotal:</span>
+                                <span id="subtotal">रु0.00</span>
+                            </div>
+                            <div class="total-row">
+                                <span>Tax (13%):</span>
+                                <span id="tax">रु0.00</span>
+                            </div>
+                            <div class="total-row grand-total">
+                                <span>Total:</span>
+                                <span id="total">रु0.00</span>
+                            </div>
+                            <div class="total-row">
+                                <span>Amount Paid:</span>
+                                <span id="amount-paid">रु0.00</span>
+                            </div>
+                            <div class="total-row">
+                                <span>Change:</span>
+                                <span id="change-amount">रु0.00</span>
+                            </div>
+                        </div>
+                        <div class="payment-methods">
+                            <div class="payment-method" data-method="cash">
+                                <i class="fas fa-money-bill-wave"></i>
+                                <div>Cash</div>
+                            </div>
+                            <div class="payment-method" data-method="card">
+                                <i class="fas fa-credit-card"></i>
+                                <div>Card</div>
+                            </div>
+                            <div class="payment-method" data-method="qr">
+                                <i class="fas fa-qrcode"></i>
+                                <div>QR Pay</div>
+                            </div>
+                        </div>
+                        <div id="cash-payment-fields" style="display:none; margin-top:15px;">
+                            <div class="form-group">
+                                <label>Amount Received (रु)</label>
+                                <input type="number" class="form-control" id="amount-received" min="0" step="0.01">
+                            </div>
+                        </div>
+                        <button class="btn btn-success btn-block" id="complete-sale" style="margin-top: 20px; width: 100%;">
+                            <i class="fas fa-check-circle"></i> Complete Sale
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Inventory Tab -->
+            <div class="tab-content" id="inventory">
+                <div class="inventory-actions">
+                    <div class="search-bar">
+                        <input type="text" placeholder="Search inventory..." id="inventory-search">
+                        <button class="btn btn-primary">
+                            <i class="fas fa-search"></i> Search
+                        </button>
+                    </div>
+                    <button class="btn btn-success" id="add-product-btn">
+                        <i class="fas fa-plus"></i> Add Product
+                    </button>
+                    <button id="import-inventory-btn" class="btn btn-secondary">
+                        <i class="fas fa-file-import"></i> Import
+                    </button>
+                    <button id="export-inventory-btn" class="btn btn-secondary">
+                        <i class="fas fa-file-export"></i> Export
+                    </button>
+                    <button id="reset-inventory-btn" class="btn btn-danger">
+                        <i class="fas fa-trash"></i> Reset All
+                    </button>
+                </div>
+
+                <div class="card">
+                    <table id="inventory-table">
+                        <thead>
+                            <tr>
+                                <th>SKU</th>
+                                <th>Product Name</th>
+                                <th>Category</th>
+                                <th>Price (रु)</th>
+                                <th>Cost (रु)</th>
+                                <th>Quantity</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Inventory items will be added dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Sales History Tab -->
+            <div class="tab-content" id="sales-history">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Sales History</div>
+                        <div class="search-bar">
+                            <input type="text" id="sales-search" placeholder="Search sales...">
+                            <button id="export-sales-history" class="btn btn-primary">
+                                <i class="fas fa-file-export"></i> Export to CSV
+                            </button>
+                        </div>
+                    </div>
+                    <table id="sales-history-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Invoice #</th>
+                                <th>Items</th>
+                                <th>Subtotal</th>
+                                <th>Tax</th>
+                                <th>Total</th>
+                                <th>Payment</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Sales history will be added dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Analytics Tab -->
+            <div class="tab-content" id="analytics">
+                <div class="analytics-grid">
+                    <div class="stat-card sales">
+                        <div class="stat-title">Today's Sales</div>
+                        <div class="stat-value" id="today-sales">रु0.00</div>
+                        <div class="stat-change">
+                            <i class="fas fa-arrow-up" id="sales-trend-icon"></i>
+                            <span id="sales-change">0% from yesterday</span>
+                        </div>
+                    </div>
+                    <div class="stat-card profit">
+                        <div class="stat-title">Gross Profit</div>
+                        <div class="stat-value" id="gross-profit">रु0.00</div>
+                        <div class="stat-change">
+                            <i class="fas fa-arrow-up" id="profit-trend-icon"></i>
+                            <span id="profit-change">0% from yesterday</span>
+                        </div>
+                    </div>
+                    <div class="stat-card items">
+                        <div class="stat-title">Items Sold</div>
+                        <div class="stat-value" id="items-sold">0</div>
+                        <div class="stat-change">
+                            <i class="fas fa-arrow-up" id="items-trend-icon"></i>
+                            <span id="items-change">0% from yesterday</span>
+                        </div>
+                    </div>
+                    <div class="stat-card customers">
+                        <div class="stat-title">Transactions</div>
+                        <div class="stat-value" id="transactions-count">0</div>
+                        <div class="stat-change">
+                            <i class="fas fa-arrow-up" id="transactions-trend-icon"></i>
+                            <span id="transactions-change">0% from yesterday</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="analytics-charts">
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <h3>Sales Trend (Last 7 Days)</h3>
+                            <div class="chart-actions">
+                                <button class="btn btn-sm btn-outline" id="refresh-sales-chart">
+                                    <i class="fas fa-sync-alt"></i> Refresh
+                                </button>
+                            </div>
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="salesWaveChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <h3>Payment Methods</h3>
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="paymentDonutChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="analytics-row">
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <h3>Top Selling Products</h3>
+                            <select id="top-products-period" class="form-control-sm">
+                                <option value="today">Today</option>
+                                <option value="week">This Week</option>
+                                <option value="month">This Month</option>
+                            </select>
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="topProductsChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <h3>Hourly Sales Today</h3>
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="hourlySalesChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Customers Tab -->
+            <div class="tab-content" id="customers">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Customers</div>
+                        <div class="search-bar">
+                            <input type="text" placeholder="Search customers..." id="customer-search">
+                            <button class="btn btn-primary" id="search-customer-btn">
+                                <i class="fas fa-search"></i> Search
+                            </button>
+                            <button class="btn btn-success" id="export-customers" style="margin-left: 10px;">
+                                <i class="fas fa-file-export"></i> Export
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <form id="add-customer-form" style="margin-bottom: 20px;">
+                            <div class="form-row">
+                                <div class="form-group" style="flex:1; margin-right:10px;">
+                                    <label for="customer-name">Name</label>
+                                    <input type="text" id="customer-name" class="form-control" required placeholder="Enter name">
+                                </div>
+                                <div class="form-group" style="flex:1; margin-right:10px;">
+                                    <label for="customer-email">Email</label>
+                                    <input type="email" id="customer-email" class="form-control" placeholder="Enter email">
+                                </div>
+                                <div class="form-group" style="flex:1; margin-right:10px;">
+                                    <label for="customer-phone">Phone Number</label>
+                                    <input type="text" id="customer-phone" class="form-control" required placeholder="Enter phone number">
+                                </div>
+                                <div class="form-group" style="flex:1; margin-right:10px;">
+                                    <label for="customer-invoice">Invoice ID</label>
+                                    <input type="text" id="customer-invoice" class="form-control" required placeholder="Enter invoice ID">
+                                </div>
+                                <div class="form-group" style="flex:2;">
+                                    <label for="customer-address">Address</label>
+                                    <input type="text" id="customer-address" class="form-control" required placeholder="Enter address">
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-success" style="margin-top:10px;">
+                                <i class="fas fa-plus"></i> Add Customer
+                            </button>
+                        </form>
+                        <table id="customers-table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone Number</th>
+            <th>Invoice ID</th>
+            <th>Address</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- Customer rows will be added dynamically -->
+    </tbody>
+</table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Tab -->
+            <div class="tab-content" id="settings">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Shop Settings</div>
+                    </div>
+                    <div class="card-body">
+                        <button class="btn btn-primary" id="open-settings-modal">
+                            <i class="fas fa-cog"></i> Configure Settings
+                        </button>
+                        <button type="button" id="reset-data-btn-settings" class="btn btn-danger" style="margin: 15px; padding: 10px 20px; border-radius: 5px; position: fixed; bottom: 20px; right: 20px;">
+                            <i class="fas fa-trash-alt"></i>
+                            <span style="margin-left: 8px;">Reset All Data</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <div class="modal" id="add-product-modal" style="display:none;">
+        <div class="modal-content" style="width:450px;">
+            <div class="modal-header">
+                <h3>Add Product</h3>
+                <button class="close-modal" type="button">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="add-product-form">
+                    <div id="product-error-message" class="error-message" style="display:none; color: #e74c3c; margin-bottom: 15px;"></div>
+                    
+                    <div class="form-group">
+                        <label for="product-name">Product Name</label>
+                        <input type="text" id="product-name" class="form-control" required placeholder="Enter product name">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="product-category">Category</label>
+                        <input type="text" id="product-category" class="form-control" required placeholder="Enter category (e.g. Electronics, Clothing)">
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group" style="flex:1; margin-right:10px;">
+                            <label for="product-price">Price (रु)</label>
+                            <input type="number" id="product-price" class="form-control" required min="0" step="0.01" placeholder="0.00">
+                        </div>
+                        <div class="form-group" style="flex:1;">
+                            <label for="product-cost">Cost (रु)</label>
+                            <input type="number" id="product-cost" class="form-control" required min="0" step="0.01" placeholder="0.00">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group" style="flex:1; margin-right:10px;">
+                            <label for="product-quantity">Quantity</label>
+                            <input type="number" id="product-quantity" class="form-control" required min="0" placeholder="0">
+                        </div>
+                        <div class="form-group" style="flex:1;">
+                            <label for="product-minstock">Min Stock Level</label>
+                            <input type="number" id="product-minstock" class="form-control" min="0" value="5" placeholder="5">
+                        </div>
+                    </div>
+                    <div class="form-group">
+    <label for="product-image-url">Image URL (optional)</label>
+    <input type="url" id="product-image-url" class="form-control" placeholder="Enter image URL">
+</div>
+                    <div class="form-actions" style="margin-top: 20px;">
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-save"></i> Save Product
+                        </button>
+                        <button type="button" class="btn btn-secondary close-modal" style="margin-left: 10px;">
+                            Cancel
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="receipt-modal">
+    <div class="modal-content receipt-wrapper">
+        <div class="modal-header">
+            <h3>Receipt</h3>
+            <span class="close-modal">&times;</span>
+        </div>
+        <div id="receipt-content">
+            <div class="receipt-header">
+                <h2 id="store-name"></h2>
+                <p id="receipt-datetime"></p>
+                <p>Receipt #: <span id="receipt-number"></span></p>
+            </div>
+            <div class="receipt-items">
+                <!-- Items will be added dynamically -->
+            </div>
+            <div class="receipt-totals">
+                <div class="receipt-row">
+                    <span>Subtotal:</span>
+                    <span id="receipt-subtotal"></span>
+                </div>
+                <div class="receipt-row">
+                    <span>Tax (13%):</span>
+                    <span id="receipt-tax"></span>
+                </div>
+                <div class="receipt-row">
+                    <span>Total:</span>
+                    <span id="receipt-total"></span>
+                </div>
+                <div class="receipt-row">
+                    <span>Amount Paid:</span>
+                    <span id="receipt-paid"></span>
+                </div>
+                <div class="receipt-row">
+                    <span>Change:</span>
+                    <span id="receipt-change"></span>
+                </div>
+            </div>
+            <div class="receipt-footer">
+                <p>"Thank you for shopping with us."</p>
+                <p>Visit again</p>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button id="print-receipt" class="btn btn-primary">Print Receipt</button>
+            <button class="btn btn-secondary close-modal">Close</button>
+        </div>
+    </div>
+</div>
+
+    <div class="modal" id="settings-modal" style="display:none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Shop Settings</h3>
+                <button class="close-modal" aria-label="Close settings modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="shop-settings-form">
+                    <div class="form-group">
+                        <label for="shop-name">Shop Name</label>
+                        <input type="text" id="shop-name" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="tax-rate">Tax Rate (%)</label>
+                        <input type="number" id="tax-rate" class="form-control" min="0" max="100" step="0.1" value="13">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save Settings</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="edit-customer-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>Edit Customer</h2>
+            <form id="edit-customer-form">
+                <div class="form-group">
+                    <label for="edit-customer-name">Name <span style="color: red;">*</span></label>
+                    <input type="text" id="edit-customer-name" placeholder="Enter customer name" required>
+                    <small class="validation-error" id="name-error" style="color: red; display: none;">Name is required.</small>
+                </div>
+                <div class="form-group">
+                    <label for="edit-customer-email">Email</label>
+                    <input type="email" id="edit-customer-email" placeholder="Enter customer email">
+                    <small class="validation-error" id="email-error" style="color: red; display: none;">Invalid email format.</small>
+                </div>
+                <div class="form-group">
+                    <label for="edit-customer-phone">Phone <span style="color: red;">*</span></label>
+                    <input type="text" id="edit-customer-phone" placeholder="Enter customer phone number" required>
+                    <small class="validation-error" id="phone-error" style="color: red; display: none;">Phone number is required.</small>
+                </div>
+                <div class="form-group">
+                    <label for="edit-customer-invoice">Invoice ID</label>
+                    <input type="text" id="edit-customer-invoice" placeholder="Enter invoice ID">
+                </div>
+                <div class="form-group">
+                    <label for="edit-customer-address">Address</label>
+                    <textarea id="edit-customer-address" placeholder="Enter customer address"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                    <button type="button" class="btn btn-secondary" id="cancel-edit-customer">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Consolidated JS at bottom -->
+    <script src="main.js"></script>
+</body>
+</html>

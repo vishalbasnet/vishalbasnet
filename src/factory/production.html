@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Production - Factory Management System</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* General styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        header {
+            background-color: #333;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+        }
+
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            background-color: #444;
+        }
+
+        nav ul li {
+            margin: 0 15px;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 15px;
+            display: block;
+        }
+
+        nav ul li a:hover {
+            background-color: #555;
+        }
+
+        main {
+            padding: 20px;
+        }
+
+        /* Form styles */
+        form {
+            margin-bottom: 20px;
+        }
+
+        input {
+            padding: 5px;
+            margin: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 5px 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Table styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #333;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .total {
+            font-weight: bold;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Factory Management System</h1>
+        <nav>
+            <ul>
+                <li><a href="dashboard.html">Dashboard</a></li>
+                <li><a href="facetoryinventory.html">Inventory</a></li>
+                <li><a href="employees.html">Employees</a></li>
+                <li><a href="production.html">Production</a></li>
+                <li><a href="reports.html">Simulation</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section id="production">
+            <h2>Production Tracking</h2>
+            <form id="addProductionForm">
+                <input type="text" id="productName" placeholder="Product Name" required>
+                <input type="number" id="productQuantity" placeholder="Quantity" required>
+                <input type="number" id="productCost" placeholder="Cost per Unit" required>
+                <button type="submit">Add Production</button>
+            </form>
+            <table id="productionTable">
+                <thead>
+                    <tr>
+                        <th>Product Name</th>
+                        <th>Quantity</th>
+                        <th>Cost per Unit</th>
+                        <th>Total Cost</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Production rows will be dynamically added here -->
+                </tbody>
+            </table>
+            <div class="total" id="totalProductionCost">Total Production Cost: ₹0</div>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2023  2023 Factory Management System by lunchfree</p>
+    </footer>
+    <script>
+        // Production Management
+        const productionForm = document.getElementById("addProductionForm");
+        const productionTableBody = document.querySelector("#productionTable tbody");
+        const totalProductionCostDiv = document.getElementById("totalProductionCost");
+
+        // Load production data from localStorage
+        let production = JSON.parse(localStorage.getItem('production')) || [];
+
+        // Initial table population
+        updateProductionTable();
+
+        productionForm.addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            // Get form values
+            const newProduction = {
+                name: document.getElementById("productName").value,
+                quantity: parseInt(document.getElementById("productQuantity").value),
+                cost: parseFloat(document.getElementById("productCost").value)
+            };
+
+            // Add to array and update storage
+            production.push(newProduction);
+            localStorage.setItem('production', JSON.stringify(production));
+
+            // Update table and total cost
+            updateProductionTable();
+            productionForm.reset();
+        });
+
+        function updateProductionTable() {
+            // Clear the table body
+            productionTableBody.innerHTML = "";
+
+            // Add each production record to the table
+            production.forEach((prod, index) => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${prod.name}</td>
+                    <td>${prod.quantity}</td>
+                    <td>₹${prod.cost.toFixed(2)}</td>
+                    <td>₹${(prod.quantity * prod.cost).toFixed(2)}</td>
+                    <td><button onclick="removeProduction(${index})">Remove</button></td>
+                `;
+                productionTableBody.appendChild(row);
+            });
+
+            // Update total production cost
+            const totalCost = production.reduce((sum, prod) => sum + (prod.quantity * prod.cost), 0);
+            totalProductionCostDiv.textContent = `Total Production Cost: ₹${totalCost.toFixed(2)}`;
+        }
+
+        // Remove production record
+        function removeProduction(index) {
+            production.splice(index, 1);
+            localStorage.setItem('production', JSON.stringify(production));
+            updateProductionTable();
+        }
+    </script>
+</body>
+</html>

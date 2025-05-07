@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terms of Service | LunchFree</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #a855f7;
+            --dark: #1e293b;
+            --light: #f8fafc;
+            --gray: #64748b;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.6;
+            color: var(--dark);
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            background-color: var(--light);
+            background-image: radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.05) 0%, rgba(248, 250, 252, 1) 90%);
+        }
+        
+        header {
+            text-align: center;
+            padding: 3rem 0;
+            border-bottom: 1px solid #e2e8f0;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .logo {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        
+        .logo-v {
+            position: relative;
+            width: 60px;
+            height: 60px;
+        }
+        
+        .logo-v:before, .logo-v:after {
+            content: '';
+            position: absolute;
+            top: 0;
+            width: 20px;
+            height: 60px;
+            background: linear-gradient(to bottom, var(--primary), var(--secondary));
+            border-radius: 10px;
+            animation: logoFloat 3s ease-in-out infinite alternate;
+        }
+        
+        .logo-v:before {
+            left: 0;
+            transform: skewY(-20deg);
+            box-shadow: 0 8px 15px -5px rgba(79, 70, 229, 0.4);
+        }
+        
+        .logo-v:after {
+            right: 0;
+            transform: skewY(20deg);
+            box-shadow: 0 8px 15px -5px rgba(168, 85, 247, 0.4);
+            animation-delay: 0.5s;
+        }
+        
+        @keyframes logoFloat {
+            0%, 100% {
+                transform: skewY(-20deg) translateY(0);
+            }
+            50% {
+                transform: skewY(-20deg) translateY(-10px);
+            }
+        }
+        
+        @keyframes logoVAfter {
+            0%, 100% {
+                transform: skewY(20deg) translateY(0);
+            }
+            50% {
+                transform: skewY(20deg) translateY(-10px);
+            }
+        }
+        
+        h1 {
+            color: var(--primary-dark);
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .tagline {
+            color: var(--gray);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        h2 {
+            color: var(--primary-dark);
+            margin-top: 3rem;
+            font-size: 1.8rem;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+        
+        h2:after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 50px;
+            height: 3px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            border-radius: 3px;
+        }
+        
+        h3 {
+            color: var(--dark);
+            margin-top: 2rem;
+            font-size: 1.3rem;
+        }
+        
+        .last-updated {
+            color: var(--gray);
+            font-style: italic;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .hero {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(168, 85, 247, 0.1) 100%);
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 2rem 0;
+            border: 1px solid #e2e8f0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero:before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.05) 0%, rgba(255,255,255,0) 70%);
+            animation: rotate 20s linear infinite;
+            z-index: -1;
+        }
+        
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .feature-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e2e8f0;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            color: white;
+        }
+        
+        .warning-box {
+            background-color: #fef2f2;
+            border-left: 4px solid #ef4444;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        ol {
+            counter-reset: item;
+            padding-left: 0;
+        }
+        
+        ol > li {
+            counter-increment: item;
+            margin-bottom: 1.5rem;
+            list-style-type: none;
+            position: relative;
+            padding-left: 2.5rem;
+        }
+        
+        ol > li:before {
+            content: counters(item, ".") ".";
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        ul {
+            padding-left: 1.5rem;
+        }
+        
+        ul li {
+            margin-bottom: 0.5rem;
+            position: relative;
+            padding-left: 1.5rem;
+        }
+        
+        ul li:before {
+            content: "•";
+            color: var(--primary);
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+        
+        a {
+            color: var(--primary-dark);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+        
+        a:hover {
+            color: var(--secondary);
+            text-decoration: underline;
+        }
+        
+        .contact-box {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(168, 85, 247, 0.1) 100%);
+            padding: 2rem;
+            border-radius: 16px;
+            margin: 3rem 0;
+            text-align: center;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .btn {
+            display: inline-block;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            margin-top: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            text-decoration: none;
+            color: white;
+        }
+        
+        footer {
+            margin-top: 3rem;
+            text-align: center;
+            color: var(--gray);
+            font-size: 0.9rem;
+            padding: 2rem 0;
+            border-top: 1px solid #e2e8f0;
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 0 1rem;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            header {
+                padding: 2rem 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="animate__animated animate__fadeIn">
+        <div class="logo animate__animated animate__bounceIn">
+            <div class="logo-v"></div>
+        </div>
+        <h1 class="animate__animated animate__fadeInUp">Terms of Service</h1>
+        <p class="tagline animate__animated animate__fadeInUp animate__delay-1s">Powering innovation through our open ecosystem</p>
+    </header>
+
+    <p class="last-updated animate__animated animate__fadeIn animate__delay-1s">Last Updated: June 10, 2023</p>
+
+    <div class="hero animate__animated animate__fadeIn animate__delay-1s">
+        <h2>About LunchFree</h2>
+        <p>LunchFree is a next-generation platform that combines cutting-edge technology with an open ecosystem approach. Our solution enables seamless integration, real-time data processing, and unparalleled flexibility for developers and users alike.</p>
+        
+        <div class="feature-card animate__animated animate__fadeInUp animate__delay-2s">
+            <div class="feature-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
+                    <polyline points="13 2 13 9 20 9"></polyline>
+                </svg>
+            </div>
+            <h3>Open Ecosystem</h3>
+            <p>Built on principles of transparency and accessibility, LunchFree gives developers full control while maintaining enterprise-grade security.</p>
+        </div>
+        
+        <div class="feature-card animate__animated animate__fadeInUp animate__delay-2s">
+            <div class="feature-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="2" y1="12" x2="22" y2="12"></line>
+                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                </svg>
+            </div>
+            <h3>Future-Proof Architecture</h3>
+            <p>Our modular design ensures your systems can evolve without disruptive migrations or costly rewrites.</p>
+        </div>
+    </div>
+
+    <div class="warning-box animate__animated animate__fadeIn animate__delay-2s">
+        <h3>Important Notice</h3>
+        <p>By using LunchFree, you acknowledge that neither our developers nor the LunchFree are liable for data loss, errors, or malfunctions resulting from outdated systems, incompatible requirements, or improper implementation.</p>
+    </div>
+
+    <h2 class="animate__animated animate__fadeIn animate__delay-1s">1. Acceptance of Terms</h2>
+    <ol class="animate__animated animate__fadeIn animate__delay-1s">
+        <li>
+            <strong>Binding Agreement</strong>
+            <p>Your use of LunchFree constitutes acceptance of these Terms and our <a href="/privacy">Privacy Policy</a>.</p>
+        </li>
+        <li>
+            <strong>Changes to Terms</strong>
+            <p>We may update these Terms with 30 days notice. Continued use after changes constitutes acceptance.</p>
+        </li>
+    </ol>
+
+    <h2 class="animate__animated animate__fadeIn animate__delay-1s">2. Service Description</h2>
+    <ol start="3" class="animate__animated animate__fadeIn animate__delay-1s">
+        <li>
+            <strong>What We Provide</strong>
+            <p>LunchFree offers:</p>
+            <ul>
+                <li>Core platform services as described in our documentation</li>
+                <li>system integration</li>
+                <li>Regular updates of software </li>
+            </ul>
+        </li>
+        <li>
+            <strong>Open Ecosystem</strong>
+            <p>Our platform enables:</p>
+            <ul>
+                <li>Third-party developers to build extensions completely disabled</li>
+                <li>User-controlled data sharing between services</li>
+                <li>Community-driven improvements</li>
+                
+            </ul>
+        </li>
+    </ol>
+
+    <h2 class="animate__animated animate__fadeIn animate__delay-1s">3. Limited Liability</h2>
+    <ol start="5" class="animate__animated animate__fadeIn animate__delay-1s">
+        <li>
+            <strong>No Warranty for Compatibility</strong>
+            <p>We are not responsible for:</p>
+            <ul>
+                <li>Data loss due to outdated client systems</li>
+                <li>Errors from unsupported configurations</li>
+                <li>Third-party service failures</li>
+            </ul>
+        </li>
+        <li>
+            <strong>User Responsibility</strong>
+            <p>You must ensure:</p>
+            <ul>
+                <li>Your systems meet minimum requirements</li>
+                <li>Regular backups of critical data</li>
+                <li>system Compatibility with current  versions</li>
+            </ul>
+        </li>
+    </ol>
+
+    <h2 class="animate__animated animate__fadeIn animate__delay-1s">4. System Requirements</h2>
+    <ol start="7" class="animate__animated animate__fadeIn animate__delay-1s">
+        <li>
+            <strong>Minimum Specifications</strong>
+            <p>To use LunchFree, your systems must meet:</p>
+            <ul>
+                <li>Modern browser (Chrome 90+, Firefox 85+, Safari 14+)</li>
+                <li>Minimum 4GB RAM for client applications</li>
+                <li>Stable internet connection (5Mbps minimum)</li>
+                <li>HTTPS/TLS 1.2+ support</li>
+                
+            </ul>
+        </li>
+        <li>
+            <strong>Deprecation Policy</strong>
+            <p>We will:</p>
+            <ul>
+                <li>Provide 6 months notice for deprecated features</li>
+                <li>Maintain backward compatibility where possible</li>
+               
+            </ul>
+        </li>
+    </ol>
+
+    <div class="contact-box animate__animated animate__fadeIn animate__delay-2s">
+        <h2>Have Questions?</h2>
+        <p>We're here to help you understand our terms and get the most from LunchFree.</p>
+        <a href="contactform.html" class="btn">Contact Our Team</a>
+    </div>
+
+    <footer class="animate__animated animate__fadeIn animate__delay-1s">
+        <p>© 2023 LunchFree. All rights reserved.</p>
+        <p><a href="Privacy Policy for LunchFree Services.html">privacy policy</a> | <a href="#">Terms of Service</a></p>
+    </footer>
+
+    <script>
+        // Simple animation trigger on scroll
+        document.addEventListener('DOMContentLoaded', function() {
+            const animateElements = document.querySelectorAll('.animate__animated');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const animation = entry.target.getAttribute('class').match(/animate__(\w+)/)[1];
+                        entry.target.style.opacity = '1';
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            animateElements.forEach(element => {
+                observer.observe(element);
+                element.style.opacity = '0';
+                element.style.transition = 'opacity 0.6s ease';
+            });
+        });
+    </script>
+</body>
+</html>

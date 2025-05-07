@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory Management</title>
+    <link rel="stylesheet" href="Inventory Management.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <script src="factoryinventory.js"></script>
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <h2>Inventory</h2>
+            <nav>
+                <button onclick="showSection('add')">Add Product</button>
+                <button onclick="showSection('list')">Inventory List</button>
+                <button onclick="showSection('analytics')">Analytics</button>
+                <button onclick="showSection('profitloss')">Profit & Loss</button>
+                <button onclick="window.location.href='dashboard.html'">Back to Dashboard</button>
+            </nav>
+        </aside>
+
+        <main class="content">
+            <section id="add" class="section">
+                <h2>Add Product</h2>
+                <form id="productForm">
+                    <input type="text" id="serial" placeholder="Serial Number" required>
+                    <input type="text" id="name" placeholder="Product Name" required>
+                    <input type="number" id="quantity" placeholder="Quantity" required>
+                    <input type="number" id="price" placeholder="Price per Unit" required>
+                    <div class="form-group">
+                        <label for="expiry">Expiry date of product:</label>
+                        <input type="date" id="expiry" required>
+                    </div>
+                    <button type="submit">Add Product</button>
+                </form>
+                <div>
+                    <p id="add-message" class="message"></p>
+                </div>
+            </section>
+
+            <section id="list" class="section hidden">
+                <h2>Inventory List</h2>
+                <input type="text" id="search" placeholder="Search products..." onkeyup="searchProduct()">
+                <button onclick="exportCSV()">Export CSV</button>
+                <button id="saveData" onclick="saveInventory()">Save Data</button>
+                <div>
+                    <p id="error-message" class="error"></p>
+                    <p id="warning-message" class="warning"></p>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Serial</th>
+                            <th>Product</th>
+                            <th>Quantity</th>
+                            <th>Price</th>
+                            <th>Added Date</th>
+                            <th>Expiry</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="inventoryTable"></tbody>
+                </table>
+            </section>
+
+            <section id="analytics" class="section hidden">
+                <h2>Sales and Inventory Analytics</h2>
+                <div class="form-group">
+                    <label for="timeframe">Timeframe:</label>
+                    <select id="timeframe" onchange="updateAnalytics()">
+                        <option value="7">7 Days</option>
+                        <option value="14">14 Days</option>
+                        <option value="1month">1 Month</option>
+                        <option value="3month">3 Months</option>
+                        <option value="6month">6 Months</option>
+                        <option value="1year">1 Year</option>
+                    </select>
+                </div>
+                
+                <div class="chart-container">
+                    <h3>Sales Data</h3>
+                    <canvas id="salesAnalyticsChart"></canvas>
+                    <div id="salesChart"></div>
+                </div>
+                
+                <div class="chart-container">
+                    <h3>Inventory Data</h3>
+                    <canvas id="inventoryAnalyticsChart"></canvas>
+                    <div id="inventoryChart"></div>
+                </div>
+            </section>
+
+            <section id="profitloss" class="section hidden">
+                <h2>Profit & Loss</h2>
+                <div class="chart-container">
+                    <canvas id="profitLossChart"></canvas>
+                </div>
+                <div id="profitLoss" class="summary-box"></div>
+                <h3>Balance Sheet</h3>
+                <div id="balanceSheet" class="summary-box"></div>
+            </section>
+        </main>
+    </div>
+
+    <script type="module" src="factoryinventory.js"></script>
+    <script>
+        window.showSection = function(section) {
+            document.querySelectorAll(".section").forEach(sec => sec.classList.add("hidden"));
+            document.getElementById(section)?.classList.remove("hidden");
+        };
+        
+        document.addEventListener("DOMContentLoaded", function() {
+            showSection('add');
+            
+            const timeframeElement = document.getElementById("timeframe");
+            if (timeframeElement && typeof window.updateAnalytics === 'function') {
+                timeframeElement.addEventListener("change", window.updateAnalytics);
+                window.updateAnalytics();
+            }
+        });
+    </script>
+</body>
+</html>

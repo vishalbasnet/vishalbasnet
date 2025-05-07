@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Restaurant POS System</title>
+  <link rel="stylesheet" href="v-pos(resturant).css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="container">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <h2>Restaurant POS</h2>
+      <ul>
+        <li><a href="#" onclick="showPage('home')">Billing</a></li>
+        <li><a href="#" onclick="showPage('dashboard')">Dashboard</a></li>
+        <li><a href="#" onclick="showPage('expenditure')">Expenditure</a></li>
+        <li><a href="#" onclick="showPage('menu-pricing')">Menu Pricing</a></li>
+        <li><a href="#" onclick="showPage('order-list-page')">Order List</a></li>
+        <li><a href="#" onclick="openThemeSettings()"></a></li>
+      </ul>
+      <div class="sidebar-footer">
+        <button onclick="clearAllData()" class="danger-btn">Reset All Data</button>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Home Page (Billing) -->
+      <div id="home" class="page active">
+        <div class="page-header">
+          <h1>Place an Order</h1>
+          <div class="daily-sales">
+            <h3>Today's Sales: रू <span id="daily-sales-amount">0.00</span></h3>
+            <button onclick="resetDailySales()" class="reset-btn">Reset Daily Sales</button>
+          </div>
+        </div>
+
+        <!-- Order Tabs -->
+        <div class="order-tabs-container">
+          <div id="order-tabs" class="order-tabs"></div>
+          <button onclick="createNewOrderTab()" class="add-tab-btn">+</button>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="search-container">
+          <input type="text" id="menu-search" placeholder="Search menu items..." oninput="filterMenuItems()">
+          <i class="fas fa-search"></i>
+        </div>
+
+        <!-- Category Tabs -->
+        <div class="category-tabs" id="category-tabs">
+          <!-- Tabs will be added dynamically -->
+        </div>
+
+        <!-- Menu Items Grid -->
+        <div class="product-grid" id="product-grid"></div>
+
+        <!-- Variant Selection Modal -->
+        <div class="modal" id="variant-modal">
+          <div class="modal-content">
+            <span class="close-btn" onclick="closeVariantModal()">&times;</span>
+            <h3 id="selected-item-title">Select Variant</h3>
+            <div class="variant-grid" id="variant-grid"></div>
+          </div>
+        </div>
+
+        <h2>Current Order</h2>
+        <button onclick="removeAllOrders()" class="remove-all-btn">Remove All Items</button>
+        <div class="table-container">
+          <table id="order-list">
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th>Variant</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Total</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+
+        <div class="payment-section">
+          <h3>Order Summary</h3>
+          <div class="form">
+            <input type="number" id="payment-amount" min="0" step="0.01" placeholder="Enter Amount">
+            <button onclick="processPayment()" class="primary-btn">Process Amount</button>
+          </div>
+          <div class="order-total-display">
+            <strong>Order Total: रू <span id="order-total-amount">0.00</span></strong>
+            <strong>Amount Paid: रू <span id="amount-paid">0.00</span></strong>
+            <strong>Change: रू <span id="change-amount">0.00</span></strong>
+          </div>
+          <button onclick="confirmPayment()" class="primary-btn" id="confirm-payment-btn" disabled>Confirm Payment</button>
+          <button onclick="printReceipt()" class="primary-btn">Print Receipt</button>
+        </div>
+        
+        <div class="keyboard-help">
+          <span>Shortcuts: 1-9 (Categories), P (Print), S (Search), C (Payment Amount), A (Confirm)</span>
+        </div>
+      </div>
+
+      <!-- Dashboard Page -->
+      <div id="dashboard" class="page">
+        <h1>Dashboard Analytics</h1>
+        <div class="cards">
+          <div class="card">
+            <h3>Today's Sales</h3>
+            <p>रू <span id="today-sales">0.00</span></p>
+          </div>
+          <div class="card">
+            <h3>Total Sales</h3>
+            <p>रू <span id="total-sales">0.00</span></p>
+          </div>
+          <div class="card">
+            <h3>Total Expenditures</h3>
+            <p>रू <span id="total-expenditures">0.00</span></p>
+          </div>
+          <div class="card">
+            <h3>Net Profit</h3>
+            <p>रू <span id="net-profit">0.00</span></p>
+          </div>
+        </div>
+
+        <div class="charts">
+          <div class="chart-container">
+            <h2>Sales Distribution</h2>
+            <div class="chart-wrapper">
+              <canvas id="donutChart"></canvas>
+            </div>
+          </div>
+          <div class="chart-container">
+            <h2>Sales Trend</h2>
+            <div class="chart-wrapper">
+              <canvas id="lineChart"></canvas>
+            </div>
+          </div>
+        </div>
+        
+        <div class="charts">
+          <div class="chart-container">
+            <h2>Weekly Sales Trend</h2>
+            <div class="chart-wrapper">
+              <canvas id="weeklyChart"></canvas>
+            </div>
+          </div>
+          <div class="chart-container">
+            <h2>Top 5 Selling Items</h2>
+            <ul id="top-items-list" class="top-items-list">
+              <!-- Top items will be added here dynamically -->
+            </ul>
+            <p id="top-items-message" class="top-items-message"></p>
+          </div>
+        </div>
+        
+        <button onclick="showAdvancedAnalytics()" class="primary-btn">Advanced Analytics</button>
+      </div>
+
+      <!-- Expenditure Page -->
+      <div id="expenditure" class="page">
+        <h1>Manage Expenditures</h1>
+        <div class="form">
+          <input type="text" id="expense-description" placeholder="Description">
+          <input type="number" id="expense-amount" min="0" step="0.01" placeholder="Amount">
+          <button onclick="addExpenditure()">Add Expenditure</button>
+        </div>
+
+        <h2>Expenditure List</h2>
+        <button onclick="removeAllExpenditures()" class="remove-all-btn">Remove All Expenditures</button>
+        <div class="table-container">
+          <table id="expenditure-list">
+            <thead>
+              <tr>
+                <th>Description</th>
+                <th>Amount</th>
+                <th>Date</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <button onclick="exporexpendituresToCSV()" class="primary-btn">Export Expenditures to CSV</button>
+      </div>
+
+      <!-- Menu Pricing Page -->
+      <div id="menu-pricing" class="page">
+        <h1>Menu Pricing</h1>
+        <div class="form">
+          <select id="menu-category" required>
+            <option value="">Select Category</option>
+            <option value="Appetizers">Appetizers</option>
+            <option value="Main Course">Main Course</option>
+            <option value="Rice & Breads">Rice & Breads</option>
+            <option value="Soups & Sides">Soups & Sides</option>
+            <option value="Desserts">Desserts</option>
+            <option value="Drinks">Drinks</option>
+          </select>
+          <input type="text" id="menu-item" placeholder="Item Name" required>
+          <div id="variant-inputs">
+            <input type="text" id="menu-variant-1" placeholder="Variant 1 Name (e.g., Veg)">
+            <input type="number" id="menu-price-1" min="0" step="0.01" placeholder="Variant 1 Price">
+          </div>
+          <button onclick="addVariantInput()">Add Variant</button>
+          <input type="text" id="menu-image" placeholder="Image URL">
+          <button onclick="addMenuItem()">Add to Menu</button>
+        </div>
+
+        <h2>Menu Items</h2>
+        <button onclick="removeAllMenuItems()" class="remove-all-btn">Remove All Items</button>
+        <div class="table-container">
+          <table id="menu-list">
+            <thead>
+              <tr>
+                <th>Category</th>
+                <th>Item</th>
+                <th>Variants</th>
+                <th>Image</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <button onclick="exportMenuToCSV()" class="export-btn">Export Menu to CSV</button>
+      </div>
+      
+      <div id="error-message-container" style="display:none; color:red; margin:10px 0;"></div>
+      
+      <!-- Order List Page -->
+      <div id="order-list-page" class="page">
+        <h1>Order History</h1>
+        
+        <div class="filter-section">
+          <div class="form">
+            <input type="date" id="start-date" placeholder="Start Date">
+            <input type="date" id="end-date" placeholder="End Date">
+            <button onclick="filterOrdersByDate()">Filter</button>
+            <button onclick="clearDateFilter()" class="reset-btn">Clear Filter</button>
+          </div>
+        </div>
+        
+        <div class="table-container">
+          <table id="all-orders-list">
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th>Variant</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Total</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <button onclick="exportToCSV()" class="export-btn">Export to CSV</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="v-pos(resturant).js"></script>
+</body>
+</html>

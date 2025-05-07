@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Factory Management System - Simulator</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* General styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        header {
+            background-color: #333;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+        }
+
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            background-color: #444;
+        }
+
+        nav ul li {
+            margin: 0 15px;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 15px;
+            display: block;
+        }
+
+        nav ul li a:hover {
+            background-color: #555;
+        }
+
+        main {
+            padding: 20px;
+        }
+
+        /* Chart container styles */
+        .chart-container {
+            width: 100%;
+            max-width: 800px;
+            margin: 20px auto;
+            background-color: white;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        canvas {
+            width: 100% !important;
+            height: auto !important;
+            max-height: 400px;
+        }
+
+        /* Table styles */
+        table {
+            width: 100%;
+            max-width: 800px;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #333;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        /* Input and button styles */
+        label {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        input[type="number"] {
+            padding: 5px;
+            width: 150px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 5px 15px;
+            background-color: #0f1112;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Factory Management System</h1>
+        <nav>
+            <ul>
+                <li><a href="dashboard.html">Dashboard</a></li>
+                <li><a href="facetoryinventory.html">Inventory</a></li>
+                <li><a href="employees.html">Employees</a></li>
+                <li><a href="production.html">Production</a></li>
+                <li><a href="reports.html">Simulation</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <h2>Revenue and Profit Report</h2>
+        <label for="priceInput">Enter Assumed Price per Unit (₹):</label>
+        <input type="number" id="priceInput" value="10" step="0.01">
+        <label for="soldItemsInput">Enter Assumed Sold Items per Day:</label>
+        <input type="number" id="soldItemsInput" value="100" step="1">
+        <button onclick="generateReport()">Generate Report</button>
+
+        <!-- Fixed Overheads Input -->
+        <div class="chart-container">
+            <h3>Fixed Overheads</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Component</th>
+                        <th>Amount (₹)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Land & Building Costs</td>
+                        <td><input type="number" id="landBuildingCost" value="500000" step="0.01"></td>
+                    </tr>
+                    <tr>
+                        <td>Construction & Renovation</td>
+                        <td><input type="number" id="constructionCost" value="200000" step="0.01"></td>
+                    </tr>
+                    <tr>
+                        <td>Machinery & Equipment</td>
+                        <td><input type="number" id="machineryCost" value="300000" step="0.01"></td>
+                    </tr>
+                    <tr>
+                        <td>Licensing & Permits</td>
+                        <td><input type="number" id="licensingCost" value="50000" step="0.01"></td>
+                    </tr>
+                    <tr>
+                        <td>Initial Employee Training</td>
+                        <td><input type="number" id="trainingCost" value="10000" step="0.01"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Variable Overheads Input -->
+        <div class="chart-container">
+            <h3>Variable Overheads</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Component</th>
+                        <th>Amount (₹)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Utility Costs</td>
+                        <td><input type="number" id="utilityCost" value="S5000" step="0.01"></td>
+                    </tr>
+                    <tr>
+                        <td>Maintenance & Repairs</td>
+                        <td><input type="number" id="maintenanceCost" value="3000" step="0.01"></td>
+                    </tr>
+                    <tr>
+                        <td>Raw Materials & Inventory</td>
+                        <td><input type="number" id="rawMaterialCost" value="20000" step="0.01"></td>
+                    </tr>
+                    <tr>
+                        <td>Labor Costs</td>
+                        <td><input type="number" id="laborCost" value="15000" step="0.01"></td>
+                    </tr>
+                    <tr>
+                        <td>Security & Safety</td>
+                        <td><input type="number" id="securityCost" value="5000" step="0.01"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Administrative & Miscellaneous Costs Input -->
+        <div class="chart-container">
+            <h3>Administrative & Miscellaneous Costs</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Component</th>
+                        <th>Amount (₹)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Office Equipment & Furniture</td>
+                        <td><input type="number" id="officeEquipmentCost" value="10000" step="0.01"></td>
+                    </tr>
+                    <tr>
+                        <td>Software & IT Systems</td>
+                        <td><input type="number" id="softwareCost" value="20000" step="0.01"></td>
+                    </tr>
+                    <tr>
+                        <td>Marketing & Branding</td>
+                        <td><input type="number" id="marketingCost" value="15000" step="0.01"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Cost Breakdown Table -->
+        <div class="chart-container">
+            <h3>Cost Breakdown</h3>
+            <table id="costBreakdownTable">
+                <thead>
+                    <tr>
+                        <th>Component</th>
+                        <th>Amount (₹)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Rows will be dynamically added here -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Cost Allocation Table -->
+        <div class="chart-container">
+            <h3>Cost Allocation Table</h3>
+            <table id="costTable">
+                <thead>
+                    <tr>
+                        <th>Year</th>
+                        <th>Fixed Costs (₹)</th>
+                        <th>Variable Costs (₹)</th>
+                        <th>Profit (₹)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Rows will be dynamically added here -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Projections Table -->
+        <div class="chart-container">
+            <h3>Projections Table</h3>
+            <table id="projectionsTable">
+                <thead>
+                    <tr>
+                        <th>Year</th>
+                        <th>Revenue (₹)</th>
+                        <th>Profit (₹)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Rows will be dynamically added here -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Charts -->
+        <div class="chart-container">
+            <h3>Revenue and Profit Over Time</h3>
+            <canvas id="barChart"></canvas>
+        </div>
+
+        <div class="chart-container">
+            <h3>Cost Distribution</h3>
+            <canvas id="pieChart"></canvas>
+        </div>
+
+        <div class="chart-container">
+            <h3>Revenue Wave</h3>
+            <canvas id="wavechart"></canvas>
+        </div>
+    </main>
+
+    <script>
+        function generateReport() {
+            // Input values
+            let price = parseFloat(document.getElementById("priceInput").value);
+            let soldItemsPerDay = parseFloat(document.getElementById("soldItemsInput").value);
+
+            // Fixed Overheads
+            let landBuildingCost = parseFloat(document.getElementById("landBuildingCost").value);
+            let constructionCost = parseFloat(document.getElementById("constructionCost").value);
+            let machineryCost = parseFloat(document.getElementById("machineryCost").value);
+            let licensingCost = parseFloat(document.getElementById("licensingCost").value);
+            let trainingCost = parseFloat(document.getElementById("trainingCost").value);
+
+            // Variable Overheads
+            let utilityCost = parseFloat(document.getElementById("utilityCost").value);
+            let maintenanceCost = parseFloat(document.getElementById("maintenanceCost").value);
+            let rawMaterialCost = parseFloat(document.getElementById("rawMaterialCost").value);
+            let laborCost = parseFloat(document.getElementById("laborCost").value);
+            let securityCost = parseFloat(document.getElementById("securityCost").value);
+
+            // Administrative & Miscellaneous Costs
+            let officeEquipmentCost = parseFloat(document.getElementById("officeEquipmentCost").value);
+            let softwareCost = parseFloat(document.getElementById("softwareCost").value);
+            let marketingCost = parseFloat(document.getElementById("marketingCost").value);
+
+            // Validate inputs
+            if (isNaN(price) || price <= 0 || isNaN(soldItemsPerDay) || soldItemsPerDay <= 0) {
+                alert("Enter valid values for price and sold items per day.");
+                return;
+            }
+
+            // Constants
+            const workingDaysPerYear = 365;
+
+            // Calculations
+            let totalQuantityPerYear = soldItemsPerDay * workingDaysPerYear;
+
+            // Fixed Costs (One-time or Recurring)
+            let totalFixedCost = landBuildingCost + constructionCost + machineryCost + licensingCost + trainingCost;
+
+            // Variable Costs (Ongoing)
+            let totalVariableCost = utilityCost + maintenanceCost + rawMaterialCost + laborCost + securityCost;
+
+            // Administrative & Miscellaneous Costs
+            let totalAdminCost = officeEquipmentCost + softwareCost + marketingCost;
+
+            // Total Cost (TC) = Fixed Costs + Variable Costs + Administrative Costs
+            let totalCost = totalFixedCost + totalVariableCost + totalAdminCost;
+
+            // Revenue and Profit
+            let revenue = price * totalQuantityPerYear;
+            let profit = revenue - totalCost;
+
+            // Populate Cost Breakdown Table
+            let costBreakdownTableBody = document.querySelector("#costBreakdownTable tbody");
+            costBreakdownTableBody.innerHTML = `
+                <tr>
+                    <td>Fixed Costs</td>
+                    <td>${totalFixedCost.toFixed(2)}</td>
+                </tr>
+                <tr>
+                    <td>Variable Costs</td>
+                    <td>${totalVariableCost.toFixed(2)}</td>
+                </tr>
+                <tr>
+                    <td>Administrative Costs</td>
+                    <td>${totalAdminCost.toFixed(2)}</td>
+                </tr>
+                <tr>
+                    <td>Total Cost</td>
+                    <td>${totalCost.toFixed(2)}</td>
+                </tr>
+                <tr>
+                    <td>Revenue</td>
+                    <td>${revenue.toFixed(2)}</td>
+                </tr>
+                <tr>
+                    <td>Profit</td>
+                    <td>${profit.toFixed(2)}</td>
+                </tr>
+            `;
+
+            let projections = [
+                { year: 1, margin: 0.035 },
+                { year: 3, margin: 0.09 },
+                { year: 5, margin: 0.13 },
+                { year: 10, margin: 0.18 }
+            ];
+
+            let projectedRevenue = projections.map(p => price * totalQuantityPerYear * p.year);
+            let projectedProfit = projections.map((p, i) => projectedRevenue[i] - (totalFixedCost + totalVariableCost * p.year + totalAdminCost));
+
+            // Cost Allocation Table
+            let costTableBody = document.querySelector("#costTable tbody");
+            costTableBody.innerHTML = projections.map(p => `
+                <tr>
+                    <td>Year ${p.year}</td>
+                    <td>${totalFixedCost.toFixed(2)}</td>
+                    <td>${(totalVariableCost * p.year).toFixed(2)}</td>
+                    <td>${projectedProfit[projections.indexOf(p)].toFixed(2)}</td>
+                </tr>
+            `).join("");
+
+            // Projections Table
+            let projectionsTableBody = document.querySelector("#projectionsTable tbody");
+            projectionsTableBody.innerHTML = projections.map(p => `
+                <tr>
+                    <td>Year ${p.year}</td>
+                    <td>${projectedRevenue[projections.indexOf(p)].toFixed(2)}</td>
+                    <td>${projectedProfit[projections.indexOf(p)].toFixed(2)}</td>
+                </tr>
+            `).join("");
+
+            // Bar Chart
+            let ctx1 = document.getElementById("barChart").getContext("2d");
+            new Chart(ctx1, {
+                type: "bar",
+                data: {
+                    labels: projections.map(p => `Year ${p.year}`),
+                    datasets: [{
+                        label: "Revenue (₹)",
+                        data: projectedRevenue,
+                        backgroundColor: "blue"
+                    }, {
+                        label: "Profit (₹)",
+                        data: projectedProfit,
+                        backgroundColor: "green"
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            // Pie Chart
+            let ctx2 = document.getElementById("pieChart").getContext("2d");
+            new Chart(ctx2, {
+                type: "pie",
+                data: {
+                    labels: ["Fixed Costs", "Variable Costs", "Administrative Costs"],
+                    datasets: [{
+                        data: [totalFixedCost, totalVariableCost, totalAdminCost],
+                        backgroundColor: ["red", "yellow", "green"]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+
+            // Wave Chart (Line Chart)
+            let ctx3 = document.getElementById("wavechart").getContext("2d");
+            new Chart(ctx3, {
+                type: "line",
+                data: {
+                    labels: projections.map(p => `Year ${p.year}`),
+                    datasets: [
+                        {
+                            label: "Revenue Wave (₹)",
+                            data: projectedRevenue,
+                            borderColor: "blue",
+                            fill: false
+                        },
+                        {
+                            label: "Total Cost (₹)",
+                            data: projections.map(p => totalFixedCost + totalVariableCost * p.year + totalAdminCost),
+                            borderColor: "red",
+                            fill: false
+                        },
+                        {
+                            label: "Profit (₹)",
+                            data: projectedProfit,
+                            borderColor: "green",
+                            fill: false
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+    <footer>
+        <p>&copy; 2021  2023 Factory Management System by lunchfree</p>
+        <p></p>
+    </footer>
+</body>
+</html>

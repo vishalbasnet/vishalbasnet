@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Factory Management System-lunch free</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Include Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <header>
+        <h1>Factory Management System</h1>
+        <nav>
+            <ul>
+                <li><a href="dashboard.html">Dashboard</a></li>
+                <li><a href="facetoryinventory.html">Inventory</a></li>
+                <li><a href="employees.html">Employees</a></li>
+                <li><a href="production.html">Production</a></li>
+                <li><a href="reports.html">Simulation</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section id="overview">
+            <h2>Overview</h2>
+            <div class="cards">
+                <div class="card">
+                    <h3>Total Inventory</h3>
+                    <p id="totalInventory">Loading...</p>
+                </div>
+                <div class="card">
+                    <h3>Total Employees</h3>
+                    <p id="totalEmployees">Loading...</p>
+                </div>
+                <div class="card">
+                    <h3>Production Rate</h3>
+                    <p id="productionRate">Loading...</p>
+                </div>
+                <div class="card">
+                    <h3>Total Production Cost</h3>
+                    <p id="totalProductionCost">Loading...</p>
+                </div>
+                <div class="card">
+                    <h3>Break-even Point</h3>
+                    <p id="breakEvenPoint">Loading...</p>
+                </div>
+                <div class="card">
+                    <h3>Risk Analysis</h3>
+                    <p id="riskAnalysis">Loading...</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Charts Section -->
+        <section id="charts">
+            <div class="chart-container">
+                <h3>Inventory vs Employees vs Production</h3>
+                <canvas id="barChart" width="400" height="200"></canvas>
+            </div>
+            <div class="chart-container">
+                <h3>Production Distribution</h3>
+                <canvas id="pieChart" width="400" height="200"></canvas>
+            </div>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2023 Factory Management System by Lunchfree</p>
+    </footer>
+    <script src="script.js"></script>
+</body>
+</html>

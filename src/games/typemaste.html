@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Typing Master</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: white;
+        }
+
+        .header {
+            padding: 20px;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.3);
+            width: 100%;
+            border-bottom: 2px solid #00ff88;
+        }
+
+        .stats {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        .level-indicator {
+            color: #00ff88;
+            font-weight: bold;
+            margin-left: 20px;
+        }
+
+        .game-container {
+            flex-grow: 1;
+            width: 800px;
+            position: relative;
+            margin: 20px;
+            overflow: hidden;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.1);
+        }
+
+        .word {
+            position: absolute;
+            font-size: 24px;
+            color: white;
+            text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .input-container {
+            margin: 20px;
+            position: relative;
+        }
+
+        #wordInput {
+            padding: 15px 30px;
+            font-size: 20px;
+            border: none;
+            border-radius: 50px;
+            width: 400px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #00ff88;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        #wordInput:focus {
+            outline: none;
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .start-btn {
+            padding: 15px 40px;
+            font-size: 18px;
+            background: #00ff88;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .start-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+        }
+
+        .particle {
+            position: absolute;
+            pointer-events: none;
+            animation: explode 0.5s ease-out forwards;
+        }
+
+        @keyframes explode {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(3); opacity: 0; }
+        }
+
+        .correct {
+            color: #00ff88 !important;
+            transform: scale(1.2);
+        }
+
+        .incorrect {
+            color: #ff0000 !important;
+            animation: shake 0.3s ease;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .result-screen {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.9);
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            display: none;
+        }
+
+        .result-screen h2 {
+            color: #00ff88;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Typing Master</h1>
+        <div class="stats">
+            <div>Score: <span id="score">0</span></div>
+            <div>Time: <span id="timer">60</span>s</div>
+            <div>Lives: <span id="lives">❤️❤️❤️</span></div>
+            <div>Level: <span id="level">1</span></div>
+            <div>Accuracy: <span id="accuracy">100</span>%</div>
+        </div>
+    </div>
+
+    <div class="game-container" id="gameContainer"></div>
+
+    <div class="input-container">
+        <input type="text" id="wordInput" placeholder="Type here..." autocomplete="off">
+    </div>
+
+    <button class="start-btn" onclick="startGame()">Start Game</button>
+
+    <div class="result-screen" id="resultScreen">
+        <h2>Game Over!</h2>
+        <p>Final Score: <span id="finalScore">0</span></p>
+        <button class="start-btn" onclick="startGame()">Play Again</button>
+    </div>
+
+    <script>
+        const words = ['james', 'emily', 'william', 'olivia', 'benjamin', 'ava', 'henry', 'isabella', 
+            'samuel', 'sophia', 'joseph', 'charlotte', 'david', 'amelia', 'john', 'mia', 
+            'daniel', 'harper', 'michael', 'evelyn', 'robert', 'abigail', 'matthew', 'ella', 
+            'christopher', 'scarlett', 'anthony', 'grace', 'andrew', 'chloe', 'joshua', 
+            'victoria', 'ethan', 'madison', 'ryan', 'luna', 'alexander', 'penelope', 
+            'nathan', 'layla', 'carter', 'zoey', 'jackson', 'riley', 'logan', 'nora', 
+            'sebastian', 'lily', 'owen', 'eleanor', 'gabriel', 'hazel', 'isaac', 'violet',
+            'jayden', 'aurora', 'cameron', 'savannah', 'theodore', 'audrey', 'elijah', 'bella',
+            'dylan', 'claire', 'lucas', 'skylar', 'levi', 'paisley', 'isaiah', 'everly',
+            'julian', 'aria', 'hudson', 'kennedy', 'grayson', 'sadie', 'aiden', 'anna',
+            'mason', 'caroline', 'nolan', 'nova', 'adrian', 'genesis', 'charles', 'emilia', 'angola', 'argentina', 'australia', 'austria', 'bahamas', 
+    'bahrain', 'belgium', 'belize', 'bhutan', 'bolivia', 'botswana', 
+    'brazil', 'brunei', 'bulgaria', 'burundi', 'cambodia', 'cameroon', 
+    'canada', 'chile', 'china', 'colombia', 'cuba', 'cyprus', 'denmark', 
+    'ecuador', 'egypt', 'eritrea', 'estonia', 'ethiopia', 'fiji', 'finland', 
+    'france', 'gabon', 'gambia', 'georgia', 'germany', 'ghana', 'greece', 
+    'grenada', 'guinea', 'haiti', 'honduras', 'hungary', 'iceland', 'india', 
+    'indonesia', 'iran', 'iraq', 'ireland', 'israel', 'italy', 'jamaica', 
+    'japan', 'jordan', 'kazakhstan', 'kenya', 'kuwait', 'laos', 'latvia', 
+    'lebanon', 'lesotho', 'liberia', 'libya', 'lithuania', 'luxembourg', 
+    'madagascar', 'malawi', 'malaysia', 'maldives', 'mali', 'malta', 
+    'mauritania', 'mauritius', 'mexico', 'monaco', 'mongolia', 'montenegro', 
+    'morocco', 'mozambique', 'namibia', 'nepal', 'netherlands', 'nicaragua', 
+    'niger', 'nigeria', 'norway', 'oman', 'pakistan', 'palau', 'panama', 
+    'paraguay', 'peru', 'poland', 'portugal', 'qatar', 'romania', 'russia', 
+    'rwanda', 'samoa', 'senegal', 'serbia', 'seychelles', 'singapore', 
+    'slovakia', 'slovenia', 'somalia', 'spain', 'sudan', 'suriname', 
+    'swaziland', 'sweden', 'switzerland', 'syria', 'taiwan', 'tajikistan', 
+    'tanzania', 'thailand', 'togo', 'tonga', 'tunisia', 'turkey', 'uganda', 
+    'ukraine', 'uruguay', 'uzbekistan', 'vanuatu', 'venezuela', 'vietnam', 
+    'yemen', 'zambia', 'zimbabwe'
+];
+        let score = 0;
+        let time = 60;
+        let lives = 3;
+        let gameActive = false;
+        let currentWords = [];
+        let level = 1;
+        let totalAttempts = 0;
+        let correctAttempts = 0;
+        let wordSpeed = 0.5; // Initial slower speed
+
+        function createWord() {
+            if (!gameActive) return;
+            
+            const word = words[Math.floor(Math.random() * words.length)];
+            const wordElement = document.createElement('div');
+            wordElement.className = 'word';
+            wordElement.textContent = word;
+            
+            const container = document.getElementById('gameContainer');
+            const containerWidth = container.offsetWidth;
+            const x = Math.random() * (containerWidth - 100);
+            
+            wordElement.style.left = `${x}px`;
+            wordElement.style.top = '-50px';
+            container.appendChild(wordElement);
+            
+            currentWords.push({
+                element: wordElement,
+                word: word,
+                x: x,
+                y: -50
+            });
+        }
+
+        function updateGame() {
+            currentWords.forEach((wordObj, index) => {
+                wordObj.y += wordSpeed * level; // Speed increases with level
+                wordObj.element.style.top = `${wordObj.y}px`;
+                
+                if (wordObj.y > document.getElementById('gameContainer').offsetHeight) {
+                    wordObj.element.remove();
+                    currentWords.splice(index, 1);
+                    loseLife();
+                    updateAccuracy(false);
+                }
+            });
+
+            if (gameActive) {
+                requestAnimationFrame(updateGame);
+            }
+        }
+
+        function updateAccuracy(isCorrect) {
+            totalAttempts++;
+            if (isCorrect) correctAttempts++;
+            const accuracy = Math.round((correctAttempts / totalAttempts) * 100) || 100;
+            document.getElementById('accuracy').textContent = accuracy;
+
+            // Check for level progression
+            if (accuracy === 100 && totalAttempts >= 10) {
+                levelUp();
+            }
+        }
+
+        function levelUp() {
+            level++;
+            document.getElementById('level').textContent = level;
+            wordSpeed += 0.2; // Increase speed for next level
+            totalAttempts = 0;
+            correctAttempts = 0;
+        }
+
+        function checkInput() {
+            const input = document.getElementById('wordInput');
+            const inputWord = input.value.trim().toLowerCase();
+            
+            let found = false;
+            currentWords.forEach((wordObj, index) => {
+                if (inputWord === wordObj.word) {
+                    found = true;
+                    score += 10;
+                    document.getElementById('score').textContent = score;
+                    createParticles(wordObj.element);
+                    wordObj.element.remove();
+                    currentWords.splice(index, 1);
+                    updateAccuracy(true);
+                }
+            });
+
+            if (found) {
+                input.value = '';
+                input.classList.add('correct');
+                setTimeout(() => input.classList.remove('correct'), 200);
+            }
+        }
+
+        function startGame() {
+            score = 0;
+            time = 60;
+            lives = 3;
+            level = 1;
+            wordSpeed = 0.5;
+            totalAttempts = 0;
+            correctAttempts = 0;
+            gameActive = true;
+            
+            document.getElementById('resultScreen').style.display = 'none';
+            document.getElementById('score').textContent = '0';
+            document.getElementById('timer').textContent = '60';
+            document.getElementById('lives').textContent = '❤️❤️❤️';
+            document.getElementById('level').textContent = '1';
+            document.getElementById('accuracy').textContent = '100';
+            document.getElementById('wordInput').value = '';
+            
+            updateTimer();
+            updateGame();
+            setInterval(createWord, 2000);
+        }
+
+        function createParticles(element) {
+            const rect = element.getBoundingClientRect();
+            for (let i = 0; i < 10; i++) {
+                const particle = document.createElement('span');
+                particle.className = 'particle';
+                particle.textContent = ['★', '☆', '✿', '✸', '❋'][Math.floor(Math.random() * 5)];
+                particle.style.left = `${rect.left + rect.width/2}px`;
+                particle.style.top = `${rect.top + rect.height/2}px`;
+                particle.style.color = `hsl(${Math.random() * 360}, 100%, 70%)`;
+                document.body.appendChild(particle);
+                setTimeout(() => particle.remove(), 500);
+            }
+        }
+
+        function loseLife() {
+            lives--;
+            document.getElementById('lives').textContent = '❤️'.repeat(lives);
+            document.getElementById('wordInput').classList.add('incorrect');
+            setTimeout(() => document.getElementById('wordInput').classList.remove('incorrect'), 300);
+            
+            if (lives <= 0) {
+                endGame();
+            }
+        }
+
+        function updateTimer() {
+            if (!gameActive) return;
+            
+            time--;
+            document.getElementById('timer').textContent = time;
+            
+            if (time <= 0) {
+                endGame();
+            } else {
+                setTimeout(updateTimer, 1000);
+            }
+        }
+
+        function endGame() {
+            gameActive = false;
+            document.getElementById('resultScreen').style.display = 'block';
+            document.getElementById('finalScore').textContent = score;
+            currentWords.forEach(word => word.element.remove());
+            currentWords = [];
+        }
+
+        document.getElementById('wordInput').addEventListener('input', checkInput);
+    </script>
+</body>
+</html>
