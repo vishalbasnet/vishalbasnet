@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Auth | Lunchfree</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700&display=swap');
+        
+        :root {
+            --neon-purple: #a742ff;
+            --neon-blue: #4e7aff;
+            --neon-cyan: #00ffea;
+            --success-green: #00ff88;
+            --gradient: linear-gradient(45deg, var(--neon-purple), var(--neon-blue));
+            --success-gradient: linear-gradient(45deg, #00ff88, #00ffea);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(-45deg, #0f0c29, #302b63, #24243e);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .auth-container {
+            position: relative;
+            width: 400px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(12px);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .auth-container:hover {
+            transform: translateY(-5px);
+        }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .auth-title {
+            color: white;
+            font-size: 2.2em;
+            font-weight: 700;
+            margin-bottom: 8px;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .toggle-options {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .toggle-option {
+            color: rgba(255, 255, 255, 0.6);
+            cursor: pointer;
+            padding: 8px 16px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .toggle-option.active {
+            color: white;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .input-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: white;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 15px rgba(93, 223, 255, 0.3);
+        }
+
+        .auth-button {
+            width: 100%;
+            padding: 16px;
+            background: var(--gradient);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            margin-top: 20px;
+        }
+
+        .auth-button:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        .google-btn {
+            width: 100%;
+            padding: 12px;
+            background: #4285F4 !important;
+            border-radius: 12px;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .google-btn:hover {
+            background: #357abd !important;
+            transform: translateY(-2px);
+        }
+
+        .google-icon {
+            width: 20px;
+            height: 20px;
+        }
+
+        .error-message {
+            color: #ff4d4d;
+            margin-top: 15px;
+            text-align: center;
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            50% { transform: translateX(10px); }
+            75% { transform: translateX(-10px); }
+        }
+
+        .success-message {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: rgba(0, 255, 136, 0.15);
+            backdrop-filter: blur(10px);
+            color: var(--success-green);
+            padding: 15px 30px;
+            border-radius: 12px;
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.2);
+            animation: successSlideUp 0.5s ease forwards;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .success-message::before {
+            content: '✓';
+            background: var(--success-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+
+        @keyframes successSlideUp {
+            0% {
+                transform: translateX(-50%) translateY(100px);
+                opacity: 0;
+            }
+            100% {
+                transform: translateX(-50%) translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .auth-button {
+            background: var(--gradient);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .auth-button::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            transform: rotate(45deg);
+            transition: 0.5s;
+        }
+
+        .auth-button:hover::after {
+            transform: rotate(45deg) translateX(100%);
+        }
+
+        .auth-container {
+            animation: containerFloat 3s ease-in-out infinite;
+            background: rgba(255, 255, 255, 0.07);
+        }
+
+        @keyframes containerFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        body {
+            background: linear-gradient(-45deg, #1a1750, #302b63, #24243e);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .auth-title {
+            background: linear-gradient(45deg, var(--neon-purple), var(--neon-blue), var(--neon-cyan));
+            background-size: 200% auto;
+            animation: gradientText 3s linear infinite;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        @keyframes gradientText {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 200% 50%; }
+        }
+
+        .confirm-password-group {
+            height: 0;
+            opacity: 0;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .signup-mode .confirm-password-group {
+            height: 72px;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-header">
+            <h1 class="auth-title">Welcome Back</h1>
+            <p class="auth-subtitle">Secure access to your account</p>
+        </div>
+
+        <div class="toggle-options">
+            <div class="toggle-option active">Sign In</div>
+            <div class="toggle-option">Sign Up</div>
+        </div>
+
+        <form class="auth-form">
+            <div class="input-group">
+                <input type="email" class="input-field" id="email" placeholder="Email" required>
+            </div>
+
+            <div class="input-group">
+                <input type="password" class="input-field" id="password" placeholder="Password" required>
+            </div>
+
+            <div class="input-group confirm-password-group">
+                <input type="password" class="input-field" id="confirm-password" placeholder="Confirm Password">
+            </div>
+
+            <button type="submit" class="auth-button" id="auth-submit">
+                Continue
+            </button>
+
+            <div class="google-btn" id="google-auth">
+                <svg class="google-icon" viewBox="0 0 24 24">
+                    <path fill="white" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                    <path fill="white" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                </svg>
+                Continue with Google
+            </div>
+        </form>
+
+        <div class="error-message"></div>
+    </div>
+
+    <script type="module">
+        import { 
+            initializeApp 
+        } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
+        import { 
+            getAuth, 
+            GoogleAuthProvider, 
+            signInWithPopup,
+            createUserWithEmailAndPassword,
+            signInWithEmailAndPassword
+        } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCq3pg99DOWox_k4_Wm1S9fHyUw5vLBVBg",
+            authDomain: "lunchfree-ele.firebaseapp.com",
+            databaseURL: "https://lunchfree-ele-default-rtdb.firebaseio.com",
+            projectId: "lunchfree-ele",
+            storageBucket: "lunchfree-ele.firebasestorage.app",
+            messagingSenderId: "540737203934",
+            appId: "1:540737203934:web:d4f1ef0a1eccd0d45d5c4f"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const provider = new GoogleAuthProvider();
+
+        // Form Toggle
+        document.querySelectorAll('.toggle-option').forEach(option => {
+            option.addEventListener('click', () => {
+                document.querySelector('.toggle-option.active').classList.remove('active');
+                option.classList.add('active');
+                document.querySelector('.auth-form').classList.toggle('signup-mode');
+                document.getElementById('auth-submit').textContent = 
+                    option.textContent === 'Sign Up' ? 'Create Account' : 'Sign In';
+            });
+        });
+
+        // Google Auth
+        document.getElementById('google-auth').addEventListener('click', async () => {
+            try {
+                const result = await signInWithPopup(auth, provider);
+                showMessage('Signed in successfully!');
+                setTimeout(() => window.location.href = '/user_profile.html', 1000);
+            } catch (error) {
+                showError(error.message.replace('Firebase: ', ''));
+            }
+        });
+        
+
+        // Form Submission
+        document.querySelector('.auth-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Get form values
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+        
+            // Simple validation
+            if(email && password) {
+                // Show success message
+                const successMessage = document.querySelector('.success-message');
+                successMessage.style.display = 'flex';
+                
+                // Add redirect after 2 seconds
+                setTimeout(() => {
+                    window.location.href = 'user profile.html'; // Redirect to profile
+                }, 2000);
+            } else {
+                // Show error message
+                document.querySelector('.error-message').style.display = 'block';
+            }
+        });
+
+        function showMessage(text) {
+            const div = document.createElement('div');
+            div.className = 'success-message';
+            div.textContent = text;
+            document.body.appendChild(div);
+            setTimeout(() => div.remove(), 3000);
+        }
+
+        function showError(text) {
+            const errorDiv = document.querySelector('.error-message');
+            errorDiv.textContent = text;
+            errorDiv.style.display = 'block';
+            setTimeout(() => errorDiv.style.display = 'none', 3000);
+        }
+    </script>
+</body>
+</html>
